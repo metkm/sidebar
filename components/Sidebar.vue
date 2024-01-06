@@ -72,7 +72,7 @@ const ui = computed(() => ({
             <ReuseItems 
               v-if="item.children" 
               :items="item.children"
-              :accordionOpen=accordionOpen
+              :accordionOpen="accordionOpen"
             />
           </template>
         </UAccordion>
