@@ -13,14 +13,14 @@ defineProps<{
   items: Route[];
 }>();
 
-const isClosed = defineModel<boolean>({ default: false });
+const isOpen = defineModel<boolean>({ default: false });
 
-const [DefineItems, ReuseItems] = createReusableTemplate<{ items: Route[] }>();
+const [DefineItems, ReuseItems] = createReusableTemplate<{ items: Route[], accordionOpen?: boolean }>();
 const [DefineItem, ReuseItem] = createReusableTemplate<{ item: Route, open?: boolean }>();
 
 const ui = computed(() => ({
   item: {
-    padding: `pb-0 ${!isClosed.value && 'pl-4'}`
+    padding: `pb-0 ${isOpen.value && 'pl-4'}`
   }
 }))
 </script>
@@ -29,7 +29,7 @@ const ui = computed(() => ({
   <DefineItem v-slot="{ item, open }">
     <UButton
       :leadingIcon="item.icon"
-      :label="!isClosed ? item.label : ''"
+      :label="(isOpen || open) ? item.label : ''"
       :to="item.to"
       square
       variant="ghost"
@@ -38,19 +38,19 @@ const ui = computed(() => ({
       activeClass="bg-primary-900 text-white"
     >
       <template 
-        v-if="item.children && !isClosed"
+        v-if="item.children && isOpen"
         #trailing
       >
         <UIcon 
           name="i-mdi-chevron-down"
           class="ml-auto transition-transform text-lg"
-          :class="{ 'rotate-90': open }"
+          :class="{ 'rotate-90': false }"
         />
       </template>
     </UButton>
   </DefineItem>
 
-  <DefineItems v-slot="{ items }">
+  <DefineItems v-slot="{ items, accordionOpen }">
     <ul class="space-y-1.5">
       <li 
         v-for="item in items" 
@@ -61,10 +61,10 @@ const ui = computed(() => ({
           :items="[{}]" 
           :ui="ui"
         >
-          <template #default="{ open }">
+          <template #default>
             <ReuseItem 
-              :item="item" 
-              :open="open"
+              :item="item"
+              :open="accordionOpen"
             />
           </template>
 
@@ -72,12 +72,14 @@ const ui = computed(() => ({
             <ReuseItems 
               v-if="item.children" 
               :items="item.children"
+              :accordionOpen=accordionOpen
             />
           </template>
         </UAccordion>
         <ReuseItem 
           v-else 
           :item="item"
+          :open="accordionOpen"
         />
       </li>
     </ul>
@@ -85,13 +87,12 @@ const ui = computed(() => ({
 
   <nav
     class="flex flex-col justify-around h-full bg-neutral-950 p-4"
-    :class="{ 'min-w-56': !isClosed }"
+    :class="{ 'min-w-56': isOpen }"
   >
     <UAccordion class="md:hidden" :items="[{}]">
-      <template #default="{ open }">
+      <template #default>
         <div class="flex w-full">
           <UButton
-            @click="isClosed = open"
             variant="ghost" 
             icon="i-mdi-menu"
             class="ml-auto"
@@ -99,16 +100,24 @@ const ui = computed(() => ({
         </div>
       </template>
         
-      <template #item>
-        <ReuseItems :items="items" />
+      <template #item="{ open }">
+        <ReuseItems 
+          :items="items"
+          :accordionOpen="open"
+        />
       </template>
     </UAccordion>
-    <ReuseItems class="hidden md:block" :items="items" />
+    <ReuseItems
+      class="hidden md:block"
+      :items="items"
+    />
 
     <UButton 
-      @click="isClosed = !isClosed" 
+      @click="isOpen = !isOpen" 
       icon="i-mdi-chevron-right"
       class="hidden md:flex justify-center"
-    />
+    >
+      {{ isOpen }}
+    </UButton>
   </nav>
 </template>
