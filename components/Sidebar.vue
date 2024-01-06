@@ -84,9 +84,31 @@ const ui = computed(() => ({
   </DefineItems>
 
   <nav
-    class="flex flex-col justify-center h-full bg-neutral-950 p-4"
+    class="flex flex-col justify-around h-full bg-neutral-950 p-4"
     :class="{ 'min-w-56': !isClosed }"
   >
-    <ReuseItems :items="items" />
+    <UAccordion class="md:hidden" :items="[{}]">
+      <template #default="{ open }">
+        <div class="flex w-full">
+          <UButton
+            @click="isClosed = open"
+            variant="ghost" 
+            icon="i-mdi-menu"
+            class="ml-auto"
+          />
+        </div>
+      </template>
+        
+      <template #item>
+        <ReuseItems :items="items" />
+      </template>
+    </UAccordion>
+    <ReuseItems class="hidden md:block" :items="items" />
+
+    <UButton 
+      @click="isClosed = !isClosed" 
+      icon="i-mdi-chevron-right"
+      class="hidden md:flex justify-center"
+    />
   </nav>
 </template>

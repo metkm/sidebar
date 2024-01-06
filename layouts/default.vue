@@ -24,15 +24,11 @@ const isClosed = ref(false);
 </script>
 
 <template>
-  <div class="flex h-screen">
+  <div class="md:flex md:h-screen">
     <Sidebar v-model="isClosed" :items="items" />
-    
-    <main class="grow p-4">
-      <p>main content</p>
 
-      <UButton @click="isClosed = !isClosed">Toggle</UButton>
-
-      <NuxtPage />
+    <main>
+      <slot />
     </main>
   </div>
 </template>
