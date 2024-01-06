@@ -13,6 +13,7 @@ const items = [
   {
     label: 'Some Actions',
     icon: 'i-mdi-turkey',
+    to: '/settings',
     click: () => {
       console.log('some action')
     }
@@ -30,6 +31,8 @@ const isClosed = ref(false);
       <p>main content</p>
 
       <UButton @click="isClosed = !isClosed">Toggle</UButton>
+
+      <NuxtPage />
     </main>
   </div>
 </template>

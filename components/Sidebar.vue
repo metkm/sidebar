@@ -13,16 +13,16 @@ defineProps<{
   items: Route[];
 }>();
 
-const isClosed = defineModel<boolean>();
+const isClosed = defineModel<boolean>({ default: false });
 
 const [DefineItems, ReuseItems] = createReusableTemplate<{ items: Route[] }>();
 const [DefineItem, ReuseItem] = createReusableTemplate<{ item: Route, open?: boolean }>();
 
-const ui = /*ui*/ {
+const ui = computed(() => ({
   item: {
-    "padding": "pb-1.5 pl-4"
+    padding: `pb-0 ${!isClosed.value && 'pl-4'}`
   }
-}
+}))
 </script>
 
 <template>
@@ -33,16 +33,17 @@ const ui = /*ui*/ {
       :to="item.to"
       square
       variant="ghost"
-      size="lg"
+      size="xl"
       class="w-full"
+      activeClass="bg-primary-900 text-white"
     >
       <template 
-        v-if="item.children"
+        v-if="item.children && !isClosed"
         #trailing
       >
         <UIcon 
           name="i-mdi-chevron-down"
-          class="ml-auto transition-transform"
+          class="ml-auto transition-transform text-lg"
           :class="{ 'rotate-90': open }"
         />
       </template>
@@ -50,7 +51,7 @@ const ui = /*ui*/ {
   </DefineItem>
 
   <DefineItems v-slot="{ items }">
-    <ul>
+    <ul class="space-y-1.5">
       <li 
         v-for="item in items" 
         :key="item.label"
@@ -82,7 +83,10 @@ const ui = /*ui*/ {
     </ul>
   </DefineItems>
 
-  <nav class="flex flex-col justify-center h-full bg-neutral-950 p-4">
+  <nav
+    class="flex flex-col justify-center h-full bg-neutral-950 p-4"
+    :class="{ 'min-w-56': !isClosed }"
+  >
     <ReuseItems :items="items" />
   </nav>
 </template>
