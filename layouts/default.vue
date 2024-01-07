@@ -13,10 +13,10 @@ const items = [
   {
     label: 'Some Actions',
     icon: 'i-mdi-turkey',
-    to: '/settings',
-    click: () => {
-      console.log('some action')
-    }
+    // to: '/settings',
+    // click: () => {
+    //   console.log('some action')
+    // }
   }
 ]
 

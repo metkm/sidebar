@@ -35,14 +35,22 @@ const ui = computed(() => ({
   <DefineItem v-slot="{ item, open }">
     <UButton
       :leadingIcon="item.icon"
-      :label="isOpen || open ? item.label : ''"
       :to="item.to"
       square
       variant="ghost"
       size="xl"
-      class="w-full"
+      class="w-full transition-all"
       activeClass="bg-primary-900 text-white"
+      :class="[isOpen || open ? 'container-open' : 'container-closed']"
     >
+      <template #default>
+        <div class="min-w-0 overflow-hidden transition-all">
+          <p class="text-left truncate px-4">
+            {{ item.label }}
+          </p>
+        </div>
+      </template>
+
       <template v-if="item.children && isOpen" #trailing>
         <UIcon
           name="i-mdi-chevron-down"
@@ -74,10 +82,8 @@ const ui = computed(() => ({
     </ul>
   </DefineItems>
 
-  <nav
-    class="flex flex-col justify-around h-full bg-neutral-950 p-4"
-    :class="{ 'min-w-56': isOpen }"
-  >
+  <nav class="flex flex-col justify-around h-full bg-neutral-950 p-4">
+    <!-- :class="{ 'min-w-56': isOpen }" -->
     <UAccordion class="md:hidden" :items="[{}]">
       <template #default>
         <div class="flex w-full">
@@ -91,11 +97,26 @@ const ui = computed(() => ({
     </UAccordion>
     <ReuseItems class="hidden md:block" :items="items" />
 
-    <UButton
-      @click="isOpen = !isOpen"
-      class="hidden md:flex justify-center"
-    >
-      <UIcon name="i-mdi-chevron-right" class="transition-transform" :class="{ 'rotate-180': isOpen }" />
+    <UButton @click="isOpen = !isOpen" class="hidden md:flex justify-center">
+      <UIcon
+        name="i-mdi-chevron-right"
+        class="transition-transform"
+        :class="{ 'rotate-180': isOpen }"
+      />
     </UButton>
   </nav>
 </template>
+
+<style scoped>
+.container-open {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  gap: 0;
+}
+
+.container-closed {
+  display: grid;
+  grid-template-columns: max-content 0fr max-content;
+  gap: 0;
+}
+</style>
