@@ -12,24 +12,25 @@ const valuesArray = ref<string[]>(
   Array(props.count).fill(undefined)
 );
 
+watch(valuesArray.value, () => {
+  modelValue.value = valuesArray.value.join("");
+})
+
 const changeFocus = (index: number) => {
-  const element = inputElements.value?.[index];
-  element?.focus();
+  inputElements.value[index]?.focus();
 }
 
-const onInput = (index: number) => {
-  currentIndex.value = Math.max(0, Math.min(props.count - 1, index));
-
-  const value = valuesArray.value[currentIndex.value];
-  console.log(value, currentIndex.value);
-  
-  if (!value) {
-    changeFocus(currentIndex.value - 1);
-  } else {
-    changeFocus(currentIndex.value + 1);
+const onKeydown = (event: KeyboardEvent, index: number) => {
+  switch (event.code) {
+    case "Backspace":
+      currentIndex.value = Math.max(0, Math.min(valuesArray.value.length, index - 1));
+      changeFocus(currentIndex.value);
+      break;
+    default:
+      currentIndex.value = Math.max(0, Math.min(valuesArray.value.length, index + 1));
+      changeFocus(currentIndex.value);
+      break;
   }
-
-  modelValue.value = valuesArray.value.join("");
 }
 </script>
 
@@ -42,7 +43,7 @@ const onInput = (index: number) => {
       :key="i"
       v-model="valuesArray[index]"
       class="w-10 h-10 rounded-lg"
-      @input="onInput(index)"
+      @keyup="onKeydown($event, index)"
       maxlength="1"
     />
   </div>
