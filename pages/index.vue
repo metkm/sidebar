@@ -30,7 +30,8 @@ const result = getDynamicSchema(string().required());
 type Result = InferType<typeof result>;
   
 const validated = result.validateSync({ title: 'Title' });
-console.log(validated)
+
+const value = ref();
 </script>
 
 <template>
@@ -38,5 +39,12 @@ console.log(validated)
     <p>home page</p>
     <p>{{ newUser }}</p>
     <UButton @click="updateUser" :loading="updateUserLoading">Fetch</UButton>
+
+    <Otp
+      v-model="value"
+      :count="4"
+    />
+
+    {{ value }}
   </div>
 </template>
